@@ -120,7 +120,7 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
               className={theme.palette.mode === 'dark' ? 'gradient-text' : ''}
               color={theme.palette.mode === 'dark' ? 'inherit' : 'white'}
             >
-              Easy DataSet
+              知造数据
             </Typography>
           </Box>
 
@@ -287,7 +287,7 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
           {/* GitHub链接 */}
           <Tooltip title={t('common.visitGitHub')}>
             <IconButton
-              onClick={() => window.open('https://github.com/ConardLi/easy-dataset', '_blank')}
+              onClick={() => window.open('https://git.nju.edu.cn/JianhaoSun/zhizaodata#', '_blank')}
               size="small"
               sx={{
                 bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.15)',

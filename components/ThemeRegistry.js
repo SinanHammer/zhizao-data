@@ -14,123 +14,106 @@ import '@fontsource/inter/700.css';
 import '@fontsource/jetbrains-mono/400.css';
 import '@fontsource/jetbrains-mono/500.css';
 
+// 推荐字体引入（如需在 public/index.html 或 _document.js 引入 Google Fonts，可加上）
+// import '@fontsource/baloo-2/400.css';
+// import '@fontsource/baloo-2/700.css';
+// import '@fontsource/nunito/400.css';
+// import '@fontsource/nunito/700.css';
+
 // 创建主题配置
 const getTheme = (mode) => {
-  // 主色调
-  const mainBlue = '#2A5CAA';
-  const darkGray = '#2D2D2D';
+  const mainColor = '#6A1B9A';
+  const accentColor = '#FFD600';
+  const backgroundColor = '#F3E8FF';
   
-  // 辅助色 - 数据可视化色谱
+  // 辅助色 - 基于紫色的配色方案
   const dataVizColors = [
-    '#6366F1', // 紫蓝色
-    '#10B981', // 绿色
-    '#F59E0B', // 琥珀色
-    '#EC4899', // 粉色
-    '#8B5CF6', // 紫色
-    '#3B82F6'  // 蓝色
+    '#9C27B0', // 深紫色
+    '#7B1FA2', // 中紫色
+    '#4A148C', // 暗紫色
+    '#E1BEE7', // 浅紫色
+    '#CE93D8', // 淡紫色
+    '#BA68C8'  // 亮紫色
   ];
   
-  // 状态色
-  const successColor = '#10B981'; // 翡翠绿
-  const warningColor = '#F59E0B'; // 琥珀色
-  const errorColor = '#EF4444';   // 珊瑚红
+  // 状态色 - 协调的状态色
+  const successColor = '#2E7D32'; // 深绿色
+  const warningColor = '#F57F17'; // 琥珀色
+  const errorColor = '#C62828';   // 深红色
   
-  // 渐变色
-  const gradientPrimary = 'linear-gradient(90deg, #2A5CAA 0%, #8B5CF6 100%)';
+  // 渐变色 - 紫色渐变方案
+  const gradientPrimary = 'linear-gradient(90deg, #6A1B9A 0%, #BA68C8 100%)';
   
   // 根据模式调整颜色
   return createTheme({
     palette: {
       mode,
-      primary: {
-        main: mainBlue,
-        dark: '#1E4785',
-        light: '#4878C6',
-        contrastText: '#FFFFFF',
-      },
-      secondary: {
-        main: '#8B5CF6',
-        dark: '#7039F2',
-        light: '#A78BFA',
-        contrastText: '#FFFFFF',
-      },
-      error: {
-        main: errorColor,
-        dark: '#DC2626',
-        light: '#F87171',
-      },
-      warning: {
-        main: warningColor,
-        dark: '#D97706',
-        light: '#FBBF24',
-      },
-      success: {
-        main: successColor,
-        dark: '#059669',
-        light: '#34D399',
-      },
-      background: {
-        default: mode === 'dark' ? '#121212' : '#F8F9FA',
-        paper: mode === 'dark' ? '#1E1E1E' : '#FFFFFF',
-        subtle: mode === 'dark' ? '#2A2A2A' : '#F3F4F6',
-      },
+      primary: { main: mainColor, light: '#BA68C8', dark: '#4A148C', contrastText: '#fff' },
+      secondary: { main: accentColor, contrastText: '#6A1B9A' },
+      background: { default: backgroundColor, paper: '#fff', subtle: '#F8F9FA' },
+      error: { main: '#E57373', dark: '#C62828', light: '#FFCDD2' },
+      warning: { main: '#FFD600', dark: '#FFA000', light: '#FFF9C4' },
+      success: { main: '#43A047', dark: '#2E7D32', light: '#A5D6A7' },
       text: {
-        primary: mode === 'dark' ? '#F3F4F6' : darkGray,
-        secondary: mode === 'dark' ? '#9CA3AF' : '#6B7280',
-        disabled: mode === 'dark' ? '#4B5563' : '#9CA3AF',
+        primary: mode === 'dark' ? '#F3F4F6' : '#2D2D2D',
+        secondary: mode === 'dark' ? '#B39DDB' : '#6A1B9A',
+        disabled: '#BDBDBD',
       },
-      divider: mode === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)',
+      divider: 'rgba(106,27,154,0.12)',
       dataViz: dataVizColors,
       gradient: {
         primary: gradientPrimary,
+        accent: 'linear-gradient(90deg, #FFD600 0%, #BA68C8 100%)',
       }
     },
     typography: {
-      fontFamily: '"Inter", "HarmonyOS Sans", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      fontFamily: '"Baloo 2", "Nunito", "Poppins", "Inter", "HarmonyOS Sans", "PingFang SC", "Microsoft YaHei", sans-serif',
       fontSize: 14,
-      fontWeightLight: 300,
-      fontWeightRegular: 400,
-      fontWeightMedium: 500,
-      fontWeightBold: 600,
+      fontWeightLight: 400,
+      fontWeightRegular: 500,
+      fontWeightMedium: 600,
+      fontWeightBold: 700,
       h1: {
-        fontSize: '2rem', // 32px
-        fontWeight: 600,
+        fontSize: '2.5rem',
+        fontWeight: 700,
+        letterSpacing: '-0.02em',
         lineHeight: 1.2,
-        letterSpacing: '-0.01em',
       },
       h2: {
-        fontSize: '1.5rem', // 24px
-        fontWeight: 600,
-        lineHeight: 1.3,
-        letterSpacing: '-0.005em',
+        fontSize: '2rem',
+        fontWeight: 700,
+        letterSpacing: '-0.01em',
+        lineHeight: 1.25,
       },
       h3: {
-        fontSize: '1.25rem', // 20px
-        fontWeight: 600,
-        lineHeight: 1.4,
+        fontSize: '1.5rem',
+        fontWeight: 700,
+        lineHeight: 1.3,
       },
       h4: {
-        fontSize: '1.125rem', // 18px
-        fontWeight: 600,
-        lineHeight: 1.4,
+        fontSize: '1.25rem',
+        fontWeight: 700,
+        lineHeight: 1.35,
       },
       h5: {
-        fontSize: '1rem', // 16px
-        fontWeight: 600,
-        lineHeight: 1.5,
+        fontSize: '1.1rem',
+        fontWeight: 700,
+        lineHeight: 1.4,
       },
       h6: {
-        fontSize: '0.875rem', // 14px
-        fontWeight: 600,
-        lineHeight: 1.5,
+        fontSize: '1rem',
+        fontWeight: 700,
+        lineHeight: 1.4,
       },
       body1: {
-        fontSize: '1rem', // 16px
-        lineHeight: 1.5,
+        fontSize: '1.05rem',
+        lineHeight: 1.7,
+        fontWeight: 500,
       },
       body2: {
-        fontSize: '0.875rem', // 14px
-        lineHeight: 1.5,
+        fontSize: '0.95rem',
+        lineHeight: 1.7,
+        fontWeight: 400,
       },
       caption: {
         fontSize: '0.75rem', // 12px
@@ -140,10 +123,13 @@ const getTheme = (mode) => {
         fontFamily: '"JetBrains Mono", monospace',
         fontSize: '0.875rem',
       },
+      button: {
+        fontWeight: 700,
+        letterSpacing: '0.04em',
+        fontSize: '1.1rem',
+      },
     },
-    shape: {
-      borderRadius: 8,
-    },
+    shape: { borderRadius: 24 },
     spacing: 8, // 基础间距单位为8px
     components: {
       MuiCssBaseline: {
@@ -162,6 +148,7 @@ const getTheme = (mode) => {
               background: mode === 'dark' ? '#4B5563' : '#9CA3AF',
               borderRadius: '4px',
             },
+            background: backgroundColor,
           },
           // 确保代码块使用 JetBrains Mono 字体
           'code, pre': {
@@ -180,34 +167,14 @@ const getTheme = (mode) => {
       MuiButton: {
         styleOverrides: {
           root: {
-            textTransform: 'none',
-            fontWeight: 500,
-            borderRadius: '8px',
-            padding: '6px 16px',
-          },
-          contained: {
-            boxShadow: 'none',
-            '&:hover': {
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-            },
-          },
-          containedPrimary: {
-            background: mainBlue,
-            '&:hover': {
-              backgroundColor: '#1E4785',
-            },
-          },
-          containedSecondary: {
-            background: '#8B5CF6',
-            '&:hover': {
-              backgroundColor: '#7039F2',
-            },
-          },
-          outlined: {
-            borderWidth: '1.5px',
-            '&:hover': {
-              borderWidth: '1.5px',
-            },
+            borderRadius: 24,
+            fontWeight: 700,
+            fontSize: '1.1rem',
+            boxShadow: '0 4px 16px rgba(106,27,154,0.08)',
+            background: 'linear-gradient(90deg, #6A1B9A 0%, #BA68C8 100%)',
+            color: '#fff',
+            padding: '10px 28px',
+            '&:hover': { background: 'linear-gradient(90deg, #9C27B0 0%, #FFD600 100%)' }
           },
         },
       },
@@ -215,32 +182,33 @@ const getTheme = (mode) => {
         styleOverrides: {
           root: {
             boxShadow: 'none',
-            background: mode === 'dark' ? '#1A1A1A' : mainBlue,
+            background: mode === 'dark' ? '#1A1A1A' : mainColor,
           },
         },
       },
       MuiCard: {
         styleOverrides: {
           root: {
-            borderRadius: '12px',
-            boxShadow: mode === 'dark' 
-              ? '0px 4px 8px rgba(0, 0, 0, 0.4)' 
-              : '0px 4px 8px rgba(0, 0, 0, 0.05)',
+            borderRadius: 24,
+            boxShadow: '0 2px 12px rgba(106,27,154,0.08)',
+            background: '#fff',
           },
         },
       },
       MuiPaper: {
         styleOverrides: {
           root: {
-            borderRadius: '12px',
+            borderRadius: 24,
+            background: '#fff',
           },
         },
       },
       MuiChip: {
         styleOverrides: {
           root: {
-            borderRadius: '6px',
-            fontWeight: 500,
+            borderRadius: 16,
+            fontWeight: 700,
+            fontSize: '1rem',
           },
         },
       },
@@ -287,6 +255,14 @@ const getTheme = (mode) => {
             fontWeight: 600,
           },
         },
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            borderRadius: 16,
+            background: '#F3E8FF',
+          }
+        }
       },
     },
   });

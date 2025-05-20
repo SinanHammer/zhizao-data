@@ -10,6 +10,7 @@ import ProjectList from '@/components/home/ProjectList';
 import CreateProjectDialog from '@/components/home/CreateProjectDialog';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -56,7 +57,7 @@ export default function Home() {
   const theme = useTheme();
 
   return (
-    <main style={{ overflow: 'hidden', position: 'relative' }}>
+    <main style={{ overflow: 'hidden', position: 'relative', minHeight: '100vh', background: '#F3E8FF' }}>
       <Navbar projects={projects} models={[]} />
 
       <HeroSection onCreateProject={() => setCreateDialogOpen(true)} />

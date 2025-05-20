@@ -3,8 +3,8 @@ import ThemeRegistry from '@/components/ThemeRegistry';
 import I18nProvider from '@/components/I18nProvider';
 
 export const metadata = {
-  title: 'Easy DataSet',
-  description: '数据集处理工具',
+  title: '知造数据',
+  description: '智能数据集处理工具',
 };
 
 export default function RootLayout({ children }) {

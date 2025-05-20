@@ -20,7 +20,7 @@ a {
 
 /* 渐变文本样式 */
 .gradient-text {
-  background: linear-gradient(90deg, #2A5CAA 0%, #8B5CF6 100%);
+  background: linear-gradient(90deg, #6A1B9A 0%, #9C27B0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

@@ -1,5 +1,5 @@
 {
-  "name": "easy-dataset",
+  "name": "zhizao-data",
   "version": "1.0.0",
   "private": true,
   "author": {
@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "next lint"
   },
   "dependencies": {

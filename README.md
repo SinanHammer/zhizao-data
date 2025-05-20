@@ -8,6 +8,8 @@
 <img src="https://img.shields.io/badge/React-18.2.0-61DAFB" alt="React 18.2.0"/>
 <img src="https://img.shields.io/badge/MUI-5.15.7-007FFF" alt="Material UI 5.15.7"/>
 
+# 知造数据 (ZhiZao Data)
+
 **A powerful tool for creating fine-tuning datasets for Large Language Models**
 
 [简体中文](./README.zh-CN.md) | [English](./README.md)
@@ -20,7 +22,7 @@
 
 Easy Dataset is a specialized application designed to streamline the creation of fine-tuning datasets for Large Language Models (LLMs). It offers an intuitive interface for uploading domain-specific files, intelligently splitting content, generating questions, and producing high-quality training data for model fine-tuning.
 
-With Easy Dataset, you can transform your domain knowledge into structured datasets compatible with all OpenAI-format compatible LLM APIs, making the fine-tuning process accessible and efficient.
+With ZhiZao Data, you can transform your domain knowledge into structured datasets compatible with all OpenAI-format compatible LLM APIs, making the fine-tuning process accessible and efficient.
 
 ![](./public/imgs/en-arc.png)
 
@@ -46,8 +48,8 @@ With Easy Dataset, you can transform your domain knowledge into structured datas
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ConardLi/easy-dataset.git
-   cd easy-dataset
+   git clone https://git.nju.edu.cn/JianhaoSun/zhizaodata.git
+   cd zhizao-data
    ```
 
 2. Install dependencies:

@@ -8,6 +8,8 @@
 <img src="https://img.shields.io/badge/React-18.2.0-61DAFB" alt="React 18.2.0"/>
 <img src="https://img.shields.io/badge/MUI-5.15.7-007FFF" alt="Material UI 5.15.7"/>
 
+# 知造数据 (ZhiZao Data)
+
 **一个强大的大型语言模型微调数据集创建工具**
 
 [简体中文](./README.zh-CN.md) | [English](./README.md)
@@ -18,9 +20,9 @@
 
 ## 概述
 
-Easy Dataset 是一个专为创建大型语言模型（LLM）微调数据集而设计的应用程序。它提供了直观的界面，用于上传特定领域的文件，智能分割内容，生成问题，并为模型微调生成高质量的训练数据。
+知造数据 是一个专为创建大型语言模型（LLM）微调数据集而设计的应用程序。它提供了直观的界面，用于上传特定领域的文件，智能分割内容，生成问题，并为模型微调生成高质量的训练数据。
 
-通过 Easy Dataset，您可以将领域知识转化为结构化数据集，兼容所有遵循 OpenAI 格式的 LLM API，使微调过程变得简单高效。
+通过 知造数据，您可以将领域知识转化为结构化数据集，兼容所有遵循 OpenAI 格式的 LLM API，使微调过程变得简单高效。
 
 ![](./public/imgs/cn-arc.png)
 
@@ -43,8 +45,8 @@ Easy Dataset 是一个专为创建大型语言模型（LLM）微调数据集而�
    
 
 ```bash
-   git clone https://github.com/ConardLi/easy-dataset.git
-   cd easy-dataset
+   git clone https://git.nju.edu.cn/JianhaoSun/zhizaodata.git
+   cd zhizao-data
    ```
 
 2. 安装依赖：
@@ -158,7 +160,7 @@ Easy Dataset 是一个专为创建大型语言模型（LLM）微调数据集而�
 ## 项目结构
 
 ```
-easy-dataset/
+zhizao-data/
 ├── app/                                # Next.js 应用目录
 │   ├── api/                            # API 路由
 │   │   ├── llm/                        # LLM API 集成

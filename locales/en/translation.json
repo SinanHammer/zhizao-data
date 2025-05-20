@@ -92,7 +92,7 @@
         "loading": "Loading..."
     },
     "home": {
-        "title": "Easy Dataset",
+        "title": "ZhiZao Data",
         "subtitle": "A powerful tool for creating fine-tuning datasets for Large Language Models",
         "createProject": "Create Project",
         "searchDataset": "Search Public Datasets"
