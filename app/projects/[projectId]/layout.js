@@ -1,9 +1,10 @@
 'use client';
 
 import Navbar from '@/components/Navbar';
-import { useState, useEffect } from 'react';
-import { Box, CircularProgress, Typography, Button } from '@mui/material';
+import ProjectSidebar from '@/components/ProjectSidebar';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function ProjectLayout({ children, params }) {
@@ -199,7 +200,10 @@ export default function ProjectLayout({ children, params }) {
         currentProject={projectId}
         models={models}
       />
-      <main>{children}</main>
+      <ProjectSidebar selectedProject={projectId} />
+      <Box sx={{ ml: '200px', minHeight: 'calc(100vh - 64px)' }}>
+        <main>{children}</main>
+      </Box>
     </>
   );
 }
