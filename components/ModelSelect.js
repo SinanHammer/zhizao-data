@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
 import {
   FormControl,
-  Select,
   MenuItem,
+  Select,
+  useMediaQuery,
   useTheme
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 export default function ModelSelect({ models = [], selectedModel, onChange, size = "small", minWidth = 180 }) {
   const theme = useTheme();
   const { t } = useTranslation();
+  const isNarrow = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleModelChange = (event) => {
     if (!event || !event.target) return;
@@ -39,7 +40,7 @@ export default function ModelSelect({ models = [], selectedModel, onChange, size
   };
 
   return (
-    <FormControl size={size} sx={{ minWidth }}>
+    <FormControl size={size} sx={{ minWidth: isNarrow ? 100 : minWidth }}>
       <Select
         value={selectedModel}
         onChange={handleModelChange}

@@ -30,7 +30,8 @@
         "questionGenDescription": "Set the maximum length for generated questions",
         "huggingfaceSettings": "Hugging Face Settings",
         "huggingfaceToken": "Hugging Face Token",
-        "huggingfaceNotImplemented": "Hugging Face functionality is not yet implemented"
+        "huggingfaceNotImplemented": "Hugging Face functionality is not yet implemented",
+        "toolConfig": "Tool Config"
     },
     "questions": {
         "title": "Questions",
@@ -131,7 +132,7 @@
         "title": "Texts",
         "uploadNewDocument": "Upload New Document",
         "selectFile": "Select File",
-        "markdownOnly": "Currently only supports Markdown (.md) format files",
+        "markdownOnly": "Supports Markdown (.md) and PDF (.pdf) files",
         "uploadAndProcess": "Upload and Process",
         "selectedFiles": "Selected Files ({{count}})",
         "oneFileMessage": "File upload not allowed, please delete the existing file first",

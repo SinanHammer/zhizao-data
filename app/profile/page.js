@@ -1,18 +1,20 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { Edit as EditIcon, Person as PersonIcon } from "@mui/icons-material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
+  Alert,
+  Avatar,
   Box,
-  Paper,
-  Typography,
-  TextField,
   Button,
   CircularProgress,
-  Avatar,
   Divider,
-  Alert,
+  IconButton,
+  Paper,
+  TextField,
+  Typography
 } from "@mui/material";
-import { Person as PersonIcon, Edit as EditIcon } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function ProfilePage() {
   const [userInfo, setUserInfo] = useState({
@@ -101,6 +103,14 @@ export default function ProfilePage() {
   return (
     <Box sx={{ minHeight: "100vh", p: 3, background: "#F3E8FF" }}>
       <Paper elevation={4} sx={{ p: 4, maxWidth: 600, mx: "auto", borderRadius: 4 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <IconButton onClick={() => window.history.length > 1 ? window.history.back() : router.push('/')} sx={{ mr: 1 }}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6" fontWeight={600} color="primary.main">
+            返回
+          </Typography>
+        </Box>
         <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
           <Avatar
             sx={{ width: 80, height: 80, bgcolor: "primary.main", mr: 2 }}
@@ -142,9 +152,9 @@ export default function ProfilePage() {
             disabled={!isEditing}
             InputProps={{
               endAdornment: !isEditing && (
-                <EditIcon 
-                  sx={{ 
-                    cursor: "pointer", 
+                <EditIcon
+                  sx={{
+                    cursor: "pointer",
                     color: "primary.main",
                     "&:hover": { color: "primary.dark" }
                   }}

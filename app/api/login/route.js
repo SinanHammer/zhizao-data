@@ -1,7 +1,6 @@
+import { NextResponse } from 'next/server';
 import { getUserByName } from '../../../db';
 import { generateToken } from '../../../lib/auth';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
 
 export async function POST(request) {
   const { username, password } = await request.json();
@@ -12,7 +11,7 @@ export async function POST(request) {
   if (!user || user.password !== password) {
     return NextResponse.json({ error: '用户名或密码错误' }, { status: 401 });
   }
-  
+
   // 生成JWT token
   const token = generateToken({
     id: user.id,
@@ -24,7 +23,8 @@ export async function POST(request) {
   const response = NextResponse.json({ success: true });
   response.cookies.set('auth_token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: false,
+    // secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/'
   });

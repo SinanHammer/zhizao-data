@@ -1,36 +1,35 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
   AppBar,
-  Toolbar,
-  Typography,
-  Box,
-  MenuItem,
-  FormControl,
-  Select,
-  Tabs,
-  Tab,
-  IconButton,
-  useTheme as useMuiTheme,
-  Tooltip,
   Avatar,
-  Chip
+  Box,
+  Chip,
+  FormControl,
+  IconButton,
+  MenuItem,
+  Select,
+  Toolbar,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+  useTheme as useMuiTheme
 } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import ModelSelect from './ModelSelect';
-import LanguageSwitcher from './LanguageSwitcher';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTheme } from 'next-themes';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
+import ModelSelect from './ModelSelect';
 
 // 图标
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import DataObjectIcon from '@mui/icons-material/DataObject';
-import StorageIcon from '@mui/icons-material/Storage';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import PersonIcon from '@mui/icons-material/Person';
+import StorageIcon from '@mui/icons-material/Storage';
 
 export default function Navbar({ projects = [], currentProject, models = [] }) {
   const [selectedProject, setSelectedProject] = useState(currentProject || '');
@@ -48,7 +47,13 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
   const pathname = usePathname();
   const theme = useMuiTheme();
   const { resolvedTheme, setTheme } = useTheme();
+  // 优化断点：md 及以下都紧凑
+  const isNarrow = useMediaQuery(theme.breakpoints.down('md'));
 
+  // 判断是否为根目录页
+  const isHome = pathname === '/';
+  // 判断是否为项目页
+  const isProjectPage = pathname.startsWith('/projects/');
   // 只在项目详情页显示模块选项卡
   const isProjectDetail = pathname.includes('/projects/') && pathname.split('/').length > 3;
 
@@ -81,11 +86,10 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
         bgcolor: theme.palette.mode === 'dark'
           ? 'background.paper'
           : 'primary.main',
-
       }}
       style={{ borderRadius: 0, zIndex: 99000 }}
     >
-      <Toolbar sx={{ minHeight: '64px' }} style={{ zIndex: 99000 }}>
+      <Toolbar sx={{ minHeight: '64px' }} style={{ zIndex: 99000, position: 'relative' }}>
         {/* 左侧Logo和项目选择 */}
         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 0 }}>
           <Box sx={{
@@ -111,18 +115,21 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
             >
               <DataObjectIcon fontSize="small" />
             </Avatar>
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{
-                fontWeight: 600,
-                letterSpacing: '-0.5px'
-              }}
-              className={theme.palette.mode === 'dark' ? 'gradient-text' : ''}
-              color={theme.palette.mode === 'dark' ? 'inherit' : 'white'}
-            >
-              知造数据
-            </Typography>
+            {/* Logo+名字：根目录页和项目页都响应式 */}
+            {!((isHome || isProjectPage) && isNarrow) && (
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{
+                  fontWeight: 600,
+                  letterSpacing: '-0.5px'
+                }}
+                className={theme.palette.mode === 'dark' ? 'gradient-text' : ''}
+                color={theme.palette.mode === 'dark' ? 'inherit' : 'white'}
+              >
+                知造数据
+              </Typography>
+            )}
           </Box>
 
           {isProjectDetail && (<FormControl size="small" sx={{ minWidth: 160 }}>
@@ -169,76 +176,15 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
         </Box>
 
         {/* 中间的功能模块导航 */}
-        {isProjectDetail && (
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }} style={{ position: 'absolute', left: '400px' }}>
-            <Tabs
-              value={pathname}
-              textColor="inherit"
-              indicatorColor="secondary"
-              sx={{
-                '& .MuiTab-root': {
-                  minWidth: 100,
-                  fontSize: '0.9rem',
-                  transition: 'all 0.2s',
-                  color: theme.palette.mode === 'dark' ? 'inherit' : 'white',
-                  opacity: theme.palette.mode === 'dark' ? 0.7 : 0.8,
-                  '&:hover': {
-                    color: theme.palette.mode === 'dark' ? theme.palette.secondary.main : 'white',
-                    opacity: 1
-                  }
-                },
-                '& .Mui-selected': {
-                  color: theme.palette.mode === 'dark' ? theme.palette.secondary.main : 'white',
-                  opacity: 1,
-                  fontWeight: 600
-                },
-                '& .MuiTabs-indicator': {
-                  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.main : 'white'
-                }
-              }}
-            >
-              <Tab
-                label={t('textSplit.title')}
-                value={`/projects/${selectedProject}/text-split`}
-                component={Link}
-                href={`/projects/${selectedProject}/text-split`}
-              />
-              <Tab
-                label={t('questions.title')}
-                value={`/projects/${selectedProject}/questions`}
-                component={Link}
-                href={`/projects/${selectedProject}/questions`}
-              />
-              <Tab
-                label={t('datasets.management')}
-                value={`/projects/${selectedProject}/datasets`}
-                component={Link}
-                href={`/projects/${selectedProject}/datasets`}
-              />
-              <Tab
-                label={t('settings.title')}
-                value={`/projects/${selectedProject}/settings`}
-                component={Link}
-                href={`/projects/${selectedProject}/settings`}
-              />
-              <Tab
-                label={t('playground.title')}
-                value={`/projects/${selectedProject}/playground`}
-                component={Link}
-                href={`/projects/${selectedProject}/playground`}
-              />
-            </Tabs>
-          </Box>
-        )}
+        {/* 中间的功能模块导航 */}
 
         {/* 右侧操作区 */}
         <Box sx={{ display: 'flex', flexGrow: 0, alignItems: 'center', gap: 2 }} style={{ position: 'absolute', right: '20px' }}>
-
           {/* 个人中心链接 */}
           <Tooltip title="个人中心">
             <Chip
               icon={<PersonIcon fontSize="small" />}
-              label="个人中心"
+              {...(!((isHome || isProjectPage) && isNarrow) && { label: '个人中心' })}
               component={Link}
               href="/profile"
               clickable
@@ -253,12 +199,11 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
               }}
             />
           </Tooltip>
-
           {/* 数据集广场链接 */}
           <Tooltip title={t('datasetSquare.title')}>
             <Chip
               icon={<StorageIcon fontSize="small" />}
-              label={t('datasetSquare.title')}
+              {...(!((isHome || isProjectPage) && isNarrow) && { label: t('datasetSquare.title') })}
               component={Link}
               href="/dataset-square"
               clickable
@@ -274,14 +219,14 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
             />
           </Tooltip>
           {/* 模型选择 */}
-          {
-            location.pathname.includes('/projects/') && (<ModelSelect
+          {location.pathname.includes('/projects/') && (
+            <ModelSelect
               models={models}
               selectedModel={selectedModel}
               onChange={handleModelChange}
-            />)
-          }
-
+              minWidth={((isHome || isProjectPage) && isNarrow) ? 100 : 180}
+            />
+          )}
           {/* 语言切换器 */}
           <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
             <LanguageSwitcher />
@@ -304,7 +249,6 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
               {resolvedTheme === 'dark' ? <LightModeOutlinedIcon fontSize="small" /> : <DarkModeOutlinedIcon fontSize="small" />}
             </IconButton>
           </Tooltip>
-
           {/* GitHub链接 */}
           <Tooltip title={t('common.visitGitHub')}>
             <IconButton
@@ -323,7 +267,6 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
               <GitHubIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-
         </Box>
       </Toolbar>
     </AppBar>

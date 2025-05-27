@@ -1,17 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Tabs,
-  Tab,
-  Paper,
+import {
   Alert,
-  CircularProgress
+  CircularProgress,
+  Container,
+  Paper,
+  Tab,
+  Tabs,
+  Typography
 } from '@mui/material';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // 导入设置组件
@@ -23,7 +22,8 @@ import TaskSettings from '@/components/settings/TaskSettings';
 const TABS = {
   BASIC: 'basic',
   MODEL: 'model',
-  TASK: 'task'
+  TASK: 'task',
+  MINERU: 'mineru',
 };
 
 export default function SettingsPage({ params }) {
@@ -50,7 +50,7 @@ export default function SettingsPage({ params }) {
       try {
         setLoading(true);
         const response = await fetch(`/api/projects/${projectId}`);
-        
+
         if (!response.ok) {
           if (response.status === 404) {
             setProjectExists(false);
@@ -67,7 +67,7 @@ export default function SettingsPage({ params }) {
         setLoading(false);
       }
     }
-    
+
     checkProject();
   }, [projectId, t]);
 
@@ -107,11 +107,11 @@ export default function SettingsPage({ params }) {
       <Typography variant="h4" gutterBottom>
         {t('settings.title')}
       </Typography>
-      
+
       <Paper sx={{ mb: 4 }}>
-        <Tabs 
-          value={activeTab} 
-          onChange={handleTabChange} 
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
           variant="fullWidth"
           textColor="primary"
           indicatorColor="primary"
@@ -120,19 +120,34 @@ export default function SettingsPage({ params }) {
           <Tab value={TABS.BASIC} label={t('settings.basicInfo')} />
           <Tab value={TABS.MODEL} label={t('settings.modelConfig')} />
           <Tab value={TABS.TASK} label={t('settings.taskConfig')} />
+          <Tab value={TABS.MINERU} label={t('settings.toolConfig') || '工具配置'} />
         </Tabs>
       </Paper>
-      
+
       {activeTab === TABS.BASIC && (
         <BasicSettings projectId={projectId} />
       )}
-      
+
       {activeTab === TABS.MODEL && (
         <ModelSettings projectId={projectId} />
       )}
-      
+
       {activeTab === TABS.TASK && (
         <TaskSettings projectId={projectId} />
+      )}
+
+      {activeTab === TABS.MINERU && (
+        <>
+          {/* 懒加载 MinerUSettings 组件 */}
+          {typeof window !== 'undefined' && (
+            <>
+              {(() => {
+                const MinerUSettings = require('@/components/settings/MinerUSettings').default;
+                return <MinerUSettings projectId={projectId} />;
+              })()}
+            </>
+          )}
+        </>
       )}
     </Container>
   );

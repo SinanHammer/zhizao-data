@@ -1,10 +1,18 @@
 'use client';
 
 import Navbar from '@/components/Navbar';
-import { useState, useEffect } from 'react';
-import { Box, CircularProgress, Typography, Button } from '@mui/material';
+import ProjectSidebar from '@/components/ProjectSidebar';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// 新增 context 用于 sidebar autoHide 状态
+const SidebarAutoHideContext = createContext({ autoHide: false, setAutoHide: () => { } });
+
+export function useSidebarAutoHide() {
+  return useContext(SidebarAutoHideContext);
+}
 
 export default function ProjectLayout({ children, params }) {
   const router = useRouter();
@@ -15,6 +23,8 @@ export default function ProjectLayout({ children, params }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [t] = useTranslation();
+  // sidebar autoHide 状态
+  const [autoHide, setAutoHide] = useState(false);
 
   // 定义获取数据的函数
   const fetchData = async () => {
@@ -193,13 +203,33 @@ export default function ProjectLayout({ children, params }) {
   }
 
   return (
-    <>
+    <SidebarAutoHideContext.Provider value={{ autoHide, setAutoHide }}>
       <Navbar
         projects={projects}
         currentProject={projectId}
         models={models}
       />
-      <main>{children}</main>
-    </>
+      <ProjectSidebar selectedProject={projectId} autoHide={autoHide} setAutoHide={setAutoHide} />
+      <Box
+        sx={autoHide
+          ? {
+            minHeight: 'calc(100vh - 64px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            ml: 0,
+            transition: 'all 0.3s',
+          }
+          : {
+            ml: '200px',
+            minHeight: 'calc(100vh - 64px)',
+            transition: 'all 0.3s',
+          }
+        }
+      >
+        <main style={{ width: autoHide ? '100%' : 'auto', maxWidth: autoHide ? 900 : 'none' }}>{children}</main>
+      </Box>
+    </SidebarAutoHideContext.Provider>
   );
 }
