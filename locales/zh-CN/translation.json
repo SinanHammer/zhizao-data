@@ -31,7 +31,8 @@
         "huggingfaceSettings": "Hugging Face 设置",
         "huggingfaceToken": "Hugging Face Token",
         "huggingfaceNotImplemented": "Hugging Face 功能暂未实现",
-        "characters": "字符"
+        "characters": "字符",
+        "toolConfig": "工具配置"
     },
     "questions": {
         "title": "问题管理",
@@ -132,7 +133,7 @@
         "title": "文献处理",
         "uploadNewDocument": "上传新文献",
         "selectFile": "选择文件",
-        "markdownOnly": "目前仅支持上传 Markdown (.md) 格式文件",
+        "markdownOnly": "支持上传 Markdown (.md) 和 PDF (.pdf) 文件",
         "uploadAndProcess": "上传并处理文件",
         "selectedFiles": "已选择文件（{{count}}）",
         "oneFileMessage": "一个项目限制处理一个文件，如需上传新文件请先删除现有文件",

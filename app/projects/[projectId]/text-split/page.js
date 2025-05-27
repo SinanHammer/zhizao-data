@@ -1,24 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import i18n from '@/lib/i18n';
-import {
-  Container,
-  Typography,
-  Box,
-  Tabs,
-  Tab,
-  Alert,
-  CircularProgress,
-  Snackbar,
-  Backdrop,
-  Paper,
-  LinearProgress
-} from '@mui/material';
-import FileUploader from '@/components/text-split/FileUploader';
 import ChunkList from '@/components/text-split/ChunkList';
 import DomainAnalysis from '@/components/text-split/DomainAnalysis';
+import FileUploader from '@/components/text-split/FileUploader';
+import i18n from '@/lib/i18n';
+import {
+  Alert,
+  Backdrop,
+  Box,
+  CircularProgress,
+  Container,
+  LinearProgress,
+  Paper,
+  Snackbar,
+  Tab,
+  Tabs,
+  Typography
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function TextSplitPage({ params }) {
   const { t } = useTranslation();
@@ -83,10 +83,26 @@ export default function TextSplitPage({ params }) {
   };
 
   // 处理文件上传成功
-  const handleUploadSuccess = (fileNames, model) => {
+  const handleUploadSuccess = (fileNames) => {
     console.log(t('textSplit.fileUploadSuccess'), fileNames);
-    // 如果有文件上传成功，自动处理第一个文件
+    fetchChunks();
     if (fileNames && fileNames.length > 0) {
+      // 直接从 localStorage 获取模型
+      const selectedModelId = localStorage.getItem('selectedModelId');
+      let model = null;
+      const modelInfoStr = localStorage.getItem('selectedModelInfo');
+      if (modelInfoStr) {
+        try {
+          model = JSON.parse(modelInfoStr);
+        } catch (e) {
+          // ignore
+        }
+      }
+      if (!selectedModelId || !model) {
+        setError(t('textSplit.selectModelFirst'));
+        console.error('Model not selected before attempting to split text.');
+        return;
+      }
       handleSplitText(fileNames[0], model);
     }
   };
@@ -95,6 +111,10 @@ export default function TextSplitPage({ params }) {
   const handleSplitText = async (fileName, model) => {
     try {
       setProcessing(true);
+      setError(null);
+      if (!model || !model.id) {
+        throw new Error(t('textSplit.selectModelFirst'));
+      }
       const language = i18n.language === 'zh-CN' ? '中文' : 'en';
       const response = await fetch(`/api/projects/${projectId}/split`, {
         method: 'POST',
@@ -103,15 +123,11 @@ export default function TextSplitPage({ params }) {
         },
         body: JSON.stringify({ fileName, model, language })
       });
-
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || t('textSplit.splitTextFailed'));
       }
-
       const data = await response.json();
-
-      // 更新文本块列表
       setChunks(prev => {
         const newChunks = [...prev];
         data.chunks.forEach(chunk => {
@@ -121,15 +137,10 @@ export default function TextSplitPage({ params }) {
         });
         return newChunks;
       });
-
-      // 更新目录结构
       if (data.toc) {
         setTocData(data.toc);
       }
-
-      // 自动切换到智能分割标签
-      setActiveTab(0);
-      location.reload();
+      setError({ severity: 'success', message: t('textSplit.splitTextSuccess') || 'Text split successfully.' });
     } catch (error) {
       console.error(t('textSplit.splitTextError'), error);
       setError(error.message);

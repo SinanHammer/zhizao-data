@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
-  Paper,
   Alert,
-  Snackbar,
-  Grid
+  Grid,
+  Paper,
+  Snackbar
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import UploadArea from './components/UploadArea';
-import FileList from './components/FileList';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import DeleteConfirmDialog from './components/DeleteConfirmDialog';
+import FileList from './components/FileList';
+import UploadArea from './components/UploadArea';
 
 /**
  * File uploader component
@@ -45,12 +45,16 @@ export default function FileUploader({ projectId, onUploadSuccess, onProcessStar
       const response = await fetch(`/api/projects/${projectId}/files`);
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || t('textSplit.fetchFilesFailed'));
       }
 
       const data = await response.json();
       setUploadedFiles(data.files || []);
+      // 统一在这里调用 onUploadSuccess，确保父组件拿到最新文件名列表
+      if (onUploadSuccess && Array.isArray(data.files)) {
+        onUploadSuccess(data.files.map(f => f.name), null);
+      }
     } catch (error) {
       console.error('获取文件列表出错:', error);
       setError(error.message);
@@ -77,8 +81,8 @@ export default function FileUploader({ projectId, onUploadSuccess, onProcessStar
     }
 
     // 检查文件类型
-    const validFiles = selectedFiles.filter(file => file.name.endsWith('.md') || file.name.endsWith('.txt'));
-    const invalidFiles = selectedFiles.filter(file => !file.name.endsWith('.md') && !file.name.endsWith('.txt'));
+    const validFiles = selectedFiles.filter(file => file.name.endsWith('.md') || file.name.endsWith('.txt') || file.name.endsWith('.pdf'));
+    const invalidFiles = selectedFiles.filter(file => !file.name.endsWith('.md') && !file.name.endsWith('.txt') && !file.name.endsWith('.pdf'));
 
     if (invalidFiles.length > 0) {
       setError(t('textSplit.unsupportedFormat', { files: invalidFiles.map(f => f.name).join(', ') }));
@@ -97,67 +101,71 @@ export default function FileUploader({ projectId, onUploadSuccess, onProcessStar
   // 上传文件
   const uploadFiles = async () => {
     if (files.length === 0) return;
-
-    // 直接开始上传文件，不再打开模型选择对话框
-    handleStartUpload();
-  };
-
-  // 开始上传文件
-  const handleStartUpload = async () => {
     setUploading(true);
     setError(null);
-
+    let uploadedNames = [];
     try {
-      // 从 localStorage 获取当前选择的模型信息
-      const selectedModelId = localStorage.getItem('selectedModelId');
-      let selectedModelInfo = null;
-
-      if (!selectedModelId) {
-        throw new Error(t('textSplit.selectModelFirst'));
-      }
-
-      // 尝试从 localStorage 获取完整的模型信息
-      const modelInfoStr = localStorage.getItem('selectedModelInfo');
-
-      if (modelInfoStr) {
-        try {
-          selectedModelInfo = JSON.parse(modelInfoStr);
-        } catch (e) {
-          throw new Error(t('textSplit.modelInfoParseError'));
-        }
-      }
-
-      const uploadedFileNames = [];
-
       for (const file of files) {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await fetch(`/api/projects/${projectId}/files`, {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || t('textSplit.uploadFailed'));
+        if (file.name.endsWith('.pdf')) {
+          // 1. 获取 MinerU 配置
+          const mineruConfigRes = await fetch(`/api/projects/${projectId}/tools/mineru`);
+          if (!mineruConfigRes.ok) throw new Error(t('textSplit.uploadFailed'));
+          const mineruConfig = await mineruConfigRes.json();
+          if (!mineruConfig.apiBaseUrl) throw new Error(t('textSplit.uploadFailed') + ': MinerU API not configured');
+          // 2. 调用 MinerU API
+          const formData = new FormData();
+          formData.append('file', file);
+          const mineruRes = await fetch(`${mineruConfig.apiBaseUrl.replace(/\/$/, '')}/file_parse`, {
+            method: 'POST',
+            body: formData
+          });
+          if (!mineruRes.ok) throw new Error(t('textSplit.uploadFailed') + ': MinerU API error');
+          const mineruData = await mineruRes.json();
+          if (!mineruData.md_content) throw new Error(t('textSplit.uploadFailed') + ': MinerU API no md_content');
+          // 3. 生成 Markdown File
+          const mdBlob = new Blob([mineruData.md_content], { type: 'text/markdown' });
+          const mdFileName = file.name.replace(/\.pdf$/, '.md');
+          const mdFile = new File([mdBlob], mdFileName, { type: 'text/markdown' });
+          // 4. 上传 Markdown 文件
+          const mdFormData = new FormData();
+          mdFormData.append('file', mdFile);
+          const response = await fetch(`/api/projects/${projectId}/files`, {
+            method: 'POST',
+            body: mdFormData
+          });
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || t('textSplit.uploadFailed'));
+          }
+          const data = await response.json();
+          if (data.fileName) {
+            uploadedNames.push(data.fileName);
+          }
+        } else {
+          // 原有上传逻辑
+          const formData = new FormData();
+          formData.append('file', file);
+          const response = await fetch(`/api/projects/${projectId}/files`, {
+            method: 'POST',
+            body: formData
+          });
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || t('textSplit.uploadFailed'));
+          }
+          const data = await response.json();
+          if (data.fileName) {
+            uploadedNames.push(data.fileName);
+          }
         }
-
-        const data = await response.json();
-        uploadedFileNames.push(data.fileName);
       }
-
-      setSuccessMessage(t('textSplit.uploadSuccess', { count: files.length }));
+      setSuccessMessage(t('textSplit.uploadSuccess', { count: uploadedNames.length }));
       setSuccess(true);
       setFiles([]);
-
+      // 上传完成后统一刷新文件列表，onUploadSuccess在fetchUploadedFiles中调用
       await fetchUploadedFiles();
-
-      // 上传成功后，返回文件名列表和选中的模型信息
-      if (onUploadSuccess) {
-        onUploadSuccess(uploadedFileNames, selectedModelInfo);
-      }
     } catch (err) {
+      console.error('Upload process error:', err);
       setError(err.message || t('textSplit.uploadFailed'));
     } finally {
       setUploading(false);

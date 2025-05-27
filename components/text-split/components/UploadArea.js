@@ -1,8 +1,8 @@
 'use client';
 
-import { Box, Button, Typography, List, ListItem, ListItemText, Divider, CircularProgress } from '@mui/material';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DeleteIcon from '@mui/icons-material/Delete';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 
@@ -50,7 +50,7 @@ export default function UploadArea({
         <input
           type="file"
           hidden
-          accept=".md"
+          accept=".md,.pdf"
           multiple
           onChange={onFileSelect}
           disabled={uploadedFiles.length > 0}
