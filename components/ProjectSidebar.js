@@ -6,11 +6,10 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function ProjectSidebar({ selectedProject }) {
+export default function ProjectSidebar({ selectedProject, autoHide, setAutoHide }) {
     const theme = useTheme();
     const pathname = usePathname();
     const { t } = useTranslation();
-    const [autoHide, setAutoHide] = useState(false);
     const [hovered, setHovered] = useState(false);
 
     // 侧边栏是否可见
@@ -31,7 +30,7 @@ export default function ProjectSidebar({ selectedProject }) {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'flex-start',
-                zIndex: 120000,
+                zIndex: 1100,
                 bgcolor: theme.palette.mode === 'dark' ? '#1A1A1A' : '#6A1B9A',
                 p: visible ? 1 : 0,
                 boxShadow: 3,
