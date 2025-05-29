@@ -1,126 +1,203 @@
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined';
+import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import TerminalOutlinedIcon from '@mui/icons-material/TerminalOutlined';
 import { Box, IconButton, Tab, Tabs, Tooltip, useTheme } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function ProjectSidebar({ selectedProject, autoHide, setAutoHide }) {
+export default function ProjectSidebar({
+    selectedProject,
+    isExpanded,
+    toggleExpand,
+    expandedWidth = 200, // Default expanded width
+    collapsedWidth = 80   // Default collapsed width
+}) {
     const theme = useTheme();
     const pathname = usePathname();
     const { t } = useTranslation();
-    const [hovered, setHovered] = useState(false);
 
-    // 侧边栏是否可见
-    const visible = !autoHide || hovered;
+    const currentWidth = isExpanded ? expandedWidth : collapsedWidth;
+
+    const navItems = [
+        {
+            key: 'textSplit',
+            label: t('textSplit.title'),
+            value: `/projects/${selectedProject}/text-split`,
+            href: `/projects/${selectedProject}/text-split`,
+            icon: <ArticleOutlinedIcon />,
+        },
+        {
+            key: 'questions',
+            label: t('questions.title'),
+            value: `/projects/${selectedProject}/questions`,
+            href: `/projects/${selectedProject}/questions`,
+            icon: <QuizOutlinedIcon />,
+        },
+        {
+            key: 'datasets',
+            label: t('datasets.management'),
+            value: `/projects/${selectedProject}/datasets`,
+            href: `/projects/${selectedProject}/datasets`,
+            icon: <FolderOutlinedIcon />,
+        },
+        {
+            key: 'settings',
+            label: t('settings.title'),
+            value: `/projects/${selectedProject}/settings`,
+            href: `/projects/${selectedProject}/settings`,
+            icon: <SettingsOutlinedIcon />,
+        },
+        {
+            key: 'playground',
+            label: t('playground.title'),
+            value: `/projects/${selectedProject}/playground`,
+            href: `/projects/${selectedProject}/playground`,
+            icon: <TerminalOutlinedIcon />,
+        },
+    ];
 
     return (
         <Box
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
             sx={{
                 position: 'fixed',
-                top: 80,
+                top: '80px', // Match Navbar height
                 left: 0,
                 height: 'calc(100vh - 80px)',
-                width: visible ? 200 : 16,
-                minWidth: visible ? 200 : 16,
-                maxWidth: visible ? 200 : 16,
+                width: currentWidth,
+                minWidth: currentWidth,
+                maxWidth: currentWidth,
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'flex-start',
+                alignItems: 'flex-start', // Align items to the start for consistent layout
                 zIndex: 1100,
-                bgcolor: theme.palette.mode === 'dark' ? '#1A1A1A' : '#6A1B9A',
-                p: visible ? 1 : 0,
+                bgcolor: theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.background.paper,
+                // p: isExpanded ? 1 : 0, // Adjust padding based on expansion
                 boxShadow: 3,
                 borderRadius: 0,
-                transition: 'width 0.2s',
-                cursor: visible ? 'default' : 'pointer',
-                overflow: 'hidden',
+                transition: theme.transitions.create('width', {
+                    easing: theme.transitions.easing.sharp,
+                    duration: theme.transitions.duration.enteringScreen,
+                }),
+                overflowX: 'hidden', // Hide horizontal overflow
+                overflowY: 'auto', // Allow vertical scroll if content exceeds height
+                '&::-webkit-scrollbar': { // For Webkit browsers
+                    width: '8px',
+                },
+                '&::-webkit-scrollbar-thumb': { // For Webkit browsers
+                    backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[400],
+                    borderRadius: '4px',
+                },
+                '&::-webkit-scrollbar-track': { // For Webkit browsers
+                    backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200],
+                },
+                scrollbarWidth: 'thin', // For Firefox
+                scrollbarColor: `${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[400]} ${theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200]}`, // For Firefox
             }}
         >
-            {visible && (
-                <Tabs
-                    orientation="vertical"
-                    value={pathname}
-                    textColor="inherit"
-                    indicatorColor="secondary"
-                    sx={{
-                        width: '100%',
-                        '& .MuiTab-root': {
-                            minWidth: 160,
-                            fontSize: '1rem',
-                            transition: 'all 0.2s',
-                            color: theme.palette.mode === 'dark' ? 'inherit' : 'white',
-                            opacity: theme.palette.mode === 'dark' ? 0.7 : 0.8,
-                            '&:hover': {
-                                color: theme.palette.mode === 'dark' ? theme.palette.secondary.main : 'white',
-                                opacity: 1
-                            },
-                            whiteSpace: 'normal',
-                            lineHeight: 1.2,
-                            textAlign: 'left',
-                            py: 1.2
-                        },
-                        '& .Mui-selected': {
-                            color: theme.palette.mode === 'dark' ? theme.palette.secondary.main : 'white',
+            <Tabs
+                orientation="vertical"
+                value={pathname} // Ensure pathname is correctly used for active tab
+                textColor="inherit"
+                indicatorColor="primary" // Use primary color for indicator
+                sx={{
+                    width: '100%',
+                    borderRight: `1px solid ${theme.palette.divider}`,
+                    '& .MuiTab-root': {
+                        minHeight: 56, // Consistent tab height
+                        minWidth: currentWidth, // Tab takes full width
+                        width: currentWidth,
+                        padding: isExpanded ? '0 16px' : '0', // Adjust padding
+                        display: 'flex',
+                        flexDirection: isExpanded ? 'row' : 'column',
+                        justifyContent: isExpanded ? 'flex-start' : 'center',
+                        alignItems: 'center',
+                        fontSize: '0.875rem', // Slightly smaller font
+                        transition: 'all 0.2s',
+                        color: theme.palette.text.secondary,
+                        opacity: 0.8,
+                        '&:hover': {
+                            backgroundColor: theme.palette.action.hover,
                             opacity: 1,
-                            fontWeight: 600
                         },
-                        '& .MuiTabs-indicator': {
-                            backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.main : 'white',
-                            left: 0,
-                            right: 'unset',
-                            width: 4
-                        }
-                    }}
-                >
-                    <Tab
-                        label={t('textSplit.title')}
-                        value={`/projects/${selectedProject}/text-split`}
-                        component={Link}
-                        href={`/projects/${selectedProject}/text-split`}
-                    />
-                    <Tab
-                        label={t('questions.title')}
-                        value={`/projects/${selectedProject}/questions`}
-                        component={Link}
-                        href={`/projects/${selectedProject}/questions`}
-                    />
-                    <Tab
-                        label={t('datasets.management')}
-                        value={`/projects/${selectedProject}/datasets`}
-                        component={Link}
-                        href={`/projects/${selectedProject}/datasets`}
-                    />
-                    <Tab
-                        label={t('settings.title')}
-                        value={`/projects/${selectedProject}/settings`}
-                        component={Link}
-                        href={`/projects/${selectedProject}/settings`}
-                    />
-                    <Tab
-                        label={t('playground.title')}
-                        value={`/projects/${selectedProject}/playground`}
-                        component={Link}
-                        href={`/projects/${selectedProject}/playground`}
-                    />
-                </Tabs>
-            )}
-            {/* 左下角 pin 按钮 */}
-            <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', pb: visible ? 1 : 0.5, pr: visible ? 1 : 0.5 }}>
-                <Tooltip title={autoHide ? t('固定侧边栏') : t('自动隐藏侧边栏')} placement="right">
+                        whiteSpace: 'nowrap', // Prevent text wrapping
+                        lineHeight: 1.2,
+                        textAlign: 'left',
+                        '& .MuiTab-iconWrapper': {
+                            marginRight: isExpanded ? theme.spacing(1.5) : 0,
+                            marginBottom: isExpanded ? 0 : theme.spacing(0.5),
+                            display: 'flex',
+                            alignItems: 'center',
+                        },
+                    },
+                    '& .Mui-selected': {
+                        color: theme.palette.primary.main,
+                        opacity: 1,
+                        fontWeight: 600,
+                        backgroundColor: theme.palette.action.selected,
+                    },
+                    '& .MuiTabs-indicator': {
+                        backgroundColor: theme.palette.primary.main,
+                        left: 0,
+                        right: 'auto',
+                        width: 4,
+                    },
+                }}
+            >
+                {navItems.map((item) => (
+                    <Tooltip title={isExpanded ? '' : item.label} placement="right" key={item.key}>
+                        <Tab
+                            value={item.value}
+                            component={Link}
+                            href={item.href}
+                            icon={item.icon}
+                            iconPosition="start"
+                            label={isExpanded ? item.label : ''}
+                            sx={{
+                                justifyContent: isExpanded ? 'flex-start' : 'center',
+                                '& .MuiTab-iconWrapper': {
+                                    ...(!isExpanded && {
+                                        width: '100%',
+                                        justifyContent: 'center',
+                                    }),
+                                },
+                            }}
+                        />
+                    </Tooltip>
+                ))}
+            </Tabs>
+            <Box sx={{ flexGrow: 1 }} /> {/* Spacer to push pin to bottom */}
+            <Box
+                sx={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: isExpanded ? 'flex-end' : 'center', // Align button
+                    alignItems: 'center',
+                    p: 1,
+                    borderTop: `1px solid ${theme.palette.divider}`,
+                }}
+            >
+                <Tooltip title={isExpanded ? t('自动隐藏侧边栏') : t('固定侧边栏')} placement="right">
                     <IconButton
                         size="small"
-                        onClick={e => {
+                        onClick={(e) => {
                             e.stopPropagation();
-                            setAutoHide(v => !v);
+                            toggleExpand();
                         }}
-                        sx={{ color: theme.palette.mode === 'dark' ? 'white' : 'white', transition: 'color 0.2s' }}
+                        sx={{
+                            color: theme.palette.text.secondary,
+                            transition: 'transform 0.3s, color 0.2s',
+                            transform: isExpanded ? 'rotate(0deg)' : 'rotate(0deg)', // Keep icon upright or rotate if preferred
+                            '&:hover': {
+                                backgroundColor: theme.palette.action.hover,
+                            }
+                        }}
                     >
-                        {autoHide ? <PushPinOutlinedIcon fontSize="small" /> : <PushPinIcon fontSize="small" />}
+                        {isExpanded ? <PushPinOutlinedIcon fontSize="small" /> : <PushPinIcon fontSize="small" />}
                     </IconButton>
                 </Tooltip>
             </Box>

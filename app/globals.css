@@ -96,3 +96,67 @@ main {
 [data-theme='dark'] .hover-card:hover {
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
 }
+
+/* Can be uncommented for custom scrollbar styling */
+/*
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0; 
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #f7fafc; 
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #2d3748;
+}
+*/
+
+/* Applying custom scrollbar globally if no specific class is preferred */
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0; /* Default light mode thumb */
+  border-radius: 4px;
+}
+
+body::-webkit-scrollbar-track {
+  background-color: #f7fafc; /* Default light mode track */
+}
+
+/* Adapting for dark mode if your app has a dark mode toggle that adds a class to body or html */
+/* For example, if dark mode adds class="dark" to <html> or <body> */
+.dark body::-webkit-scrollbar-thumb,
+html.dark body::-webkit-scrollbar-thumb,
+body.dark ::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
+}
+
+.dark body::-webkit-scrollbar-track,
+html.dark body::-webkit-scrollbar-track,
+body.dark ::-webkit-scrollbar-track {
+  background-color: #2d3748;
+}
+
+/* Firefox scrollbar styling */
+body {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc; /* thumb track */
+}
+
+.dark body,
+html.dark body,
+body.dark {
+  scrollbar-color: #4a5568 #2d3748; /* thumb track for dark mode */
+}
