@@ -158,7 +158,7 @@ export default function Navbar({ projects = [], currentProject, models = [] }) {
               MenuProps={{
                 PaperProps: {
                   elevation: 2,
-                  sx: { mt: 1, borderRadius: 2 }
+                  sx: { mt: 1, borderRadius: 1 }
                 }
               }}
             >

@@ -8,10 +8,13 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // 新增 context 用于 sidebar autoHide 状态
-const SidebarAutoHideContext = createContext({ autoHide: false, setAutoHide: () => { } });
+const SidebarContext = createContext({
+  isSidebarExpanded: true,
+  toggleSidebarExpand: () => { },
+});
 
-export function useSidebarAutoHide() {
-  return useContext(SidebarAutoHideContext);
+export function useSidebar() {
+  return useContext(SidebarContext);
 }
 
 export default function ProjectLayout({ children, params }) {
@@ -22,9 +25,13 @@ export default function ProjectLayout({ children, params }) {
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [t] = useTranslation();
+  const { t } = useTranslation();
   // sidebar autoHide 状态
-  const [autoHide, setAutoHide] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+
+  const toggleSidebarExpand = () => {
+    setIsSidebarExpanded(prev => !prev);
+  };
 
   // 定义获取数据的函数
   const fetchData = async () => {
@@ -202,34 +209,42 @@ export default function ProjectLayout({ children, params }) {
     );
   }
 
+  const expandedSidebarWidth = 200;
+  const collapsedSidebarWidth = 80;
+
   return (
-    <SidebarAutoHideContext.Provider value={{ autoHide, setAutoHide }}>
+    <SidebarContext.Provider value={{ isSidebarExpanded, toggleSidebarExpand }}>
       <Navbar
         projects={projects}
         currentProject={projectId}
         models={models}
       />
-      <ProjectSidebar selectedProject={projectId} autoHide={autoHide} setAutoHide={setAutoHide} />
+      <ProjectSidebar
+        selectedProject={projectId}
+        isExpanded={isSidebarExpanded}
+        toggleExpand={toggleSidebarExpand}
+        expandedWidth={expandedSidebarWidth}
+        collapsedWidth={collapsedSidebarWidth}
+      />
       <Box
-        sx={autoHide
-          ? {
-            minHeight: 'calc(100vh - 64px)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            ml: 0,
-            transition: 'all 0.3s',
-          }
-          : {
-            ml: '200px',
-            minHeight: 'calc(100vh - 64px)',
-            transition: 'all 0.3s',
-          }
-        }
+        component="main"
+        sx={{
+          paddingTop: '80px', // Assuming Navbar height is 80px
+          minHeight: 'calc(100vh - 80px)',
+          marginLeft: isSidebarExpanded ? `${expandedSidebarWidth}px` : `${collapsedSidebarWidth}px`,
+          width: `calc(100% - ${(isSidebarExpanded ? expandedSidebarWidth : collapsedSidebarWidth)}px)`,
+          transition: (theme) => theme.transitions.create(['margin-left', 'width'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
+          display: 'flex',
+          flexDirection: 'column',
+        }}
       >
-        <main style={{ width: autoHide ? '100%' : 'auto', maxWidth: autoHide ? 900 : 'none' }}>{children}</main>
+        <Box sx={{ width: '100%', maxWidth: isSidebarExpanded ? 1100 : 'none', margin: isSidebarExpanded ? '0 auto' : 'initial', flexGrow: 1, p: 3 }}>
+          {children}
+        </Box>
       </Box>
-    </SidebarAutoHideContext.Provider>
+    </SidebarContext.Provider>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { alpha, createTheme, ThemeProvider } from '@mui/material/styles';
 import { ThemeProvider as NextThemeProvider, useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
@@ -25,7 +25,7 @@ const getTheme = (mode) => {
   const mainColor = '#6A1B9A';
   const accentColor = '#FFD600';
   const backgroundColor = '#F3E8FF';
-  
+
   // 辅助色 - 基于紫色的配色方案
   const dataVizColors = [
     '#9C27B0', // 深紫色
@@ -35,28 +35,32 @@ const getTheme = (mode) => {
     '#CE93D8', // 淡紫色
     '#BA68C8'  // 亮紫色
   ];
-  
+
   // 状态色 - 协调的状态色
   const successColor = '#2E7D32'; // 深绿色
   const warningColor = '#F57F17'; // 琥珀色
   const errorColor = '#C62828';   // 深红色
-  
+
   // 渐变色 - 紫色渐变方案
   const gradientPrimary = 'linear-gradient(90deg, #6A1B9A 0%, #BA68C8 100%)';
-  
+
   // 根据模式调整颜色
   return createTheme({
     palette: {
       mode,
       primary: { main: mainColor, light: '#BA68C8', dark: '#4A148C', contrastText: '#fff' },
       secondary: { main: accentColor, contrastText: '#6A1B9A' },
-      background: { default: backgroundColor, paper: '#fff', subtle: '#F8F9FA' },
+      background: {
+        default: mode === 'dark' ? '#121212' : backgroundColor,
+        paper: mode === 'dark' ? '#1E1E1E' : '#fff',
+        subtle: mode === 'dark' ? '#2C2C2C' : '#F8F9FA'
+      },
       error: { main: '#E57373', dark: '#C62828', light: '#FFCDD2' },
       warning: { main: '#FFD600', dark: '#FFA000', light: '#FFF9C4' },
       success: { main: '#43A047', dark: '#2E7D32', light: '#A5D6A7' },
       text: {
-        primary: mode === 'dark' ? '#F3F4F6' : '#2D2D2D',
-        secondary: mode === 'dark' ? '#B39DDB' : '#6A1B9A',
+        primary: mode === 'dark' ? '#E0E0E0' : '#2D2D2D',
+        secondary: mode === 'dark' ? '#B0B0B0' : '#6A1B9A',
         disabled: '#BDBDBD',
       },
       divider: 'rgba(106,27,154,0.12)',
@@ -133,10 +137,10 @@ const getTheme = (mode) => {
     spacing: 8, // 基础间距单位为8px
     components: {
       MuiCssBaseline: {
-        styleOverrides: {
+        styleOverrides: (theme) => ({
           body: {
             scrollbarWidth: 'thin',
-            scrollbarColor: mode === 'dark' ? '#4B5563 transparent' : '#9CA3AF transparent',
+            scrollbarColor: theme.palette.mode === 'dark' ? '#4B5563 transparent' : '#9CA3AF transparent',
             '&::-webkit-scrollbar': {
               width: '8px',
               height: '8px',
@@ -145,16 +149,14 @@ const getTheme = (mode) => {
               background: 'transparent',
             },
             '&::-webkit-scrollbar-thumb': {
-              background: mode === 'dark' ? '#4B5563' : '#9CA3AF',
+              background: theme.palette.mode === 'dark' ? '#4B5563' : '#9CA3AF',
               borderRadius: '4px',
             },
-            background: backgroundColor,
+            background: theme.palette.background.default,
           },
-          // 确保代码块使用 JetBrains Mono 字体
           'code, pre': {
             fontFamily: '"JetBrains Mono", monospace',
           },
-          // 自定义渐变文本的通用样式
           '.gradient-text': {
             background: gradientPrimary,
             WebkitBackgroundClip: 'text',
@@ -162,20 +164,64 @@ const getTheme = (mode) => {
             backgroundClip: 'text',
             textFillColor: 'transparent',
           },
-        },
+        }),
       },
       MuiButton: {
         styleOverrides: {
-          root: {
+          root: ({ theme }) => ({
             borderRadius: 24,
             fontWeight: 700,
             fontSize: '1.1rem',
-            boxShadow: '0 4px 16px rgba(106,27,154,0.08)',
-            background: 'linear-gradient(90deg, #6A1B9A 0%, #BA68C8 100%)',
-            color: '#fff',
+            boxShadow: theme.palette.mode === 'dark' ? `0 4px 20px ${alpha(theme.palette.common.black, 0.35)}` : `0 4px 16px ${alpha(theme.palette.primary.main, 0.18)}`,
+            background: `linear-gradient(90deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+            color: theme.palette.secondary.main,
             padding: '10px 28px',
-            '&:hover': { background: 'linear-gradient(90deg, #9C27B0 0%, #FFD600 100%)' }
-          },
+            transition: theme.transitions.create(['background-color', 'box-shadow', 'background', 'color'], {
+              duration: theme.transitions.duration.short,
+            }),
+            '&:hover': {
+              background: 'linear-gradient(90deg, #9C27B0 0%, #FFD600 100%)',
+              color: theme.palette.common.black,
+              boxShadow: theme.shadows[6],
+            }
+          }),
+          // disabled: ({ theme }) => ({
+          //   boxShadow: 'none',
+          //   ...(theme.palette.mode === 'dark' && {
+          //     background: alpha(theme.palette.primary.dark, 0.4),
+          //     color: alpha(theme.palette.secondary.main, 0.5),
+          //   }),
+          //   ...(theme.palette.mode === 'light' && {
+          //     background: theme.palette.action.disabledBackground,
+          //     color: theme.palette.action.disabled,
+          //   }),
+          // }),
+          outlined: ({ theme }) => ({
+            // borderColor: theme.palette.mode === 'dark' ? alpha(theme.palette.primary.light, 0.7) : theme.palette.primary.main,
+            color: theme.palette.secondary.main,
+            '&:hover': {
+              background: 'linear-gradient(90deg, #9C27B0 0%, #FFD600 100%)',
+              color: theme.palette.common.black,
+              boxShadow: theme.shadows[6],
+            },
+            '&.Mui-disabled': {
+              borderColor: theme.palette.action.disabledBackground,
+              color: alpha(theme.palette.secondary.main, 0.5),
+            }
+          }),
+          contained: ({ theme }) => ({
+            // borderColor: theme.palette.mode === 'dark' ? alpha(theme.palette.primary.light, 0.7) : theme.palette.primary.main,
+            color: theme.palette.secondary.main,
+            '&:hover': {
+              background: 'linear-gradient(90deg, #9C27B0 0%, #FFD600 100%)',
+              color: theme.palette.common.black,
+              boxShadow: theme.shadows[6],
+            },
+            '&.Mui-disabled': {
+              borderColor: theme.palette.action.disabledBackground,
+              color: alpha(theme.palette.secondary.main, 0.5),
+            }
+          }),
         },
       },
       MuiAppBar: {
@@ -188,19 +234,19 @@ const getTheme = (mode) => {
       },
       MuiCard: {
         styleOverrides: {
-          root: {
+          root: ({ theme }) => ({
             borderRadius: 24,
             boxShadow: '0 2px 12px rgba(106,27,154,0.08)',
-            background: '#fff',
-          },
+            background: theme.palette.background.paper,
+          }),
         },
       },
       MuiPaper: {
         styleOverrides: {
-          root: {
+          root: ({ theme }) => ({
             borderRadius: 24,
-            background: '#fff',
-          },
+            background: theme.palette.background.paper,
+          }),
         },
       },
       MuiChip: {
@@ -258,10 +304,10 @@ const getTheme = (mode) => {
       },
       MuiOutlinedInput: {
         styleOverrides: {
-          root: {
+          root: ({ theme }) => ({
             borderRadius: 16,
-            background: '#F3E8FF',
-          }
+            background: theme.palette.mode === 'dark' ? '#252525' : '#F3E8FF',
+          })
         }
       },
     },

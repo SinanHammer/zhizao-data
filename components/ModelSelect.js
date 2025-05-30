@@ -66,7 +66,7 @@ export default function ModelSelect({ models = [], selectedModel, onChange, size
         MenuProps={{
           PaperProps: {
             elevation: 2,
-            sx: { mt: 1, borderRadius: 2 }
+            sx: { mt: 1, borderRadius: 1 }
           }
         }}
       >
