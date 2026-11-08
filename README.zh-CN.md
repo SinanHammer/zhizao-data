@@ -45,7 +45,7 @@
    
 
 ```bash
-   git clone https://git.nju.edu.cn/JianhaoSun/zhizaodata.git
+   git clone https://github.com/SinanHammer/zhizao-data.git
    cd zhizao-data
    ```
 
